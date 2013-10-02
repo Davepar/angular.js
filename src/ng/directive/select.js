@@ -138,16 +138,18 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
           optionsMap = {},
           ngModelCtrl = nullModelCtrl,
           nullOption,
-          unknownOption;
+          unknownOption,
+          selectSize;
 
 
       self.databound = $attrs.ngModel;
 
 
-      self.init = function(ngModelCtrl_, nullOption_, unknownOption_) {
+      self.init = function(ngModelCtrl_, nullOption_, unknownOption_, selectSize_) {
         ngModelCtrl = ngModelCtrl_;
         nullOption = nullOption_;
         unknownOption = unknownOption_;
+        selectSize = selectSize_;
       }
 
 
@@ -198,6 +200,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
           ngModelCtrl = ctrls[1],
           multiple = attr.multiple,
           optionsExp = attr.ngOptions,
+          selectSize = attr.selectSize,
           nullOption = false, // if false, user will not be able to select it (used by ngOptions)
           emptyOption,
           // we can't just jqLite('<option>') since jqLite is not smart enough
@@ -214,7 +217,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
         }
       }
 
-      selectCtrl.init(ngModelCtrl, nullOption, unknownOption);
+      selectCtrl.init(ngModelCtrl, nullOption, unknownOption, selectSize);
 
       // required validator
       if (multiple && (attr.required || attr.ngRequired)) {
@@ -469,7 +472,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
             if (nullOption || modelValue === null) {
               // insert null option if we have a placeholder, or the model is null
               optionGroups[''].unshift({id:'', label:'', selected:!selectedSet});
-            } else if (!selectedSet) {
+            } else if (!selectedSet && (!selectSize || selectSize == '1')) {
               // option could not be found, we have to insert the undefined item
               optionGroups[''].unshift({id:'?', label:'', selected:true});
             }
